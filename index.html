@@ -1,35 +1,138 @@
 <!doctype html>
+
 <html lang="es">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Classroom</title>
+<title>Mini Games 5x 2P</title>
 <style>
-:root{--bg:#4682B4;--accent:#000000;--panel:#D3D3D3;}
-body{margin:0;font-family:monospace;background:var(--bg);color:var(--accent);text-align:center}
-h1{margin:10px}
-#menu{padding:10px}
-button{background:	#FFFF00 ;border:2px solid blue(--accent);color:var(--accent);padding:8px 12px;margin:6px;cursor:pointer}
-canvas{display:block;margin:12px auto;border:4px solid var(--accent);background:#071;image-rendering:pixelated}
+/* ===== COLORES Y FUENTES ===== */
+:root{
+  --yellow:#FFFF00;
+  --orange:#FFA500;
+  --text:#000000;
+}
+
+/* ===== BODY ===== */
+body{
+  margin:0;
+  font-family: monospace;
+  color: var(--text);
+  text-align: center;
+  background: linear-gradient(to bottom, #001f3f, #003366);
+  position: relative;
+}
+
+/* ===== LOGO ===== */
+#logo{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 32px;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 2px 2px 4px #000;
+}
+
+/* ===== TITULO ===== */
+#title{
+  font-size: 48px;
+  color: #FFD700;
+  text-shadow:
+     2px 2px 0 #FF8C00,
+     4px 4px 0 rgba(0,0,0,0.2);
+  margin:0;
+  padding-top: 10px;
+}
+
+/* ===== MENU ===== */
+#menu{
+  padding-top: 100px;
+}
+
+/* ===== BOTONES ===== */
+button{
+  font-size: 20px;
+  font-weight: bold;
+  padding: 16px 24px;
+  margin: 12px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(to bottom, var(--yellow), var(--orange));
+  color: black;
+  cursor: pointer;
+  box-shadow: 2px 4px 6px rgba(0,0,0,0.3);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+button:hover{
+  transform: translateY(-2px);
+  box-shadow: 2px 6px 10px rgba(0,0,0,0.4);
+}
+
+/* ===== CANVAS ===== */
+canvas{
+  display:block;
+  margin:20px auto;
+  border:4px solid var(--text);
+  background:#071;
+  image-rendering: pixelated;
+}
+
+/* ===== INFO ===== */
 #info{height:22px}
-.small{font-size:12px;color:#ccc;margin-top:6px}
-#overlay{position:fixed;left:0;top:0;width:100%;height:100%;display:none;align-items:center;justify-content:center;background:rgba(146, 141, 141, 0.81);z-index:50}
-#overlay .panel{background:#D3D3D3;border:2px solid var(--accent);padding:14px;text-align:center;color:white}
+
+.small{
+  font-size:12px;
+  color:#ccc;
+  margin-top:6px;
+}
+
+/* ===== OVERLAY ===== */
+#overlay{
+  position: fixed;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(146,141,141,0.81);
+  z-index:50;
+}
+#overlay .panel{
+  background:#D3D3D3;
+  border:2px solid var(--text);
+  padding:14px;
+  text-align:center;
+  color:white;
+}
 </style>
 </head>
 <body>
-<h1>🎮 Mini Games 6x </h1>
+
+<!-- LOGO -->
+<div id="logo">BG</div>
+
+<!-- TITULO -->
+<h1 id="title">🎮 Mini Games 5x 2P</h1>
+
+<!-- MENU -->
 <div id="menu">
- <button onclick="startGame('futbol')">⚽ Fútbol</button>
- <button onclick="startGame('pong')">🏓 Ping Pong</button>
- <button onclick="startGame('tug')">🪢 Tira y Afloja</button>
- <button onclick="startGame('shooter')">🔫 Shooter</button>
- <button onclick="startGame('f1')">🏎️ F1</button>
- <button onclick="startGame('nascar')">🚗 NASCAR</button>
+ <button onclick="startGame('futbolGame')">⚽ Fútbol</button>
+ <button onclick="startGame('pongGame')">🏓 Ping Pong</button>
+ <button onclick="startGame('tugGame')">🪢 Tira y Afloja</button>
+ <button onclick="startGame('shooterGame')">🔫 Shooter</button>
+ <button onclick="startGame('f1Game')">🏎️ F1</button>
+ <button onclick="startGame('nascarGame')">🚗 NASCAR</button>
  <button onclick="startTournament()">🏆 Torneo</button>
 </div>
+
+<!-- CANVAS -->
 <canvas id="gameCanvas" width="900" height="560" style="display:none"></canvas>
+
 <div id="info"></div>
+
 <div class="small">
  Controles resumen:<br>
  Fútbol P1=WASD P2=Flechas | Pong P1=W/S P2=↑/↓ 
@@ -38,105 +141,86 @@ canvas{display:block;margin:12px auto;border:4px solid var(--accent);background:
  | NASCAR P1=A (tap) P2=L (tap) (W/↑ opcional base accel)
 </div>
 
-
-<div id="overlay"><div class="panel">
- <div id="overlayText">PAUSA</div>
- <div style="margin-top:10px">
-   <button onclick="resumeFromOverlay()">Reanudar (ESC)</button>
-   <button onclick="restartCurrent()">Reiniciar</button>
-   <button onclick="exitToMenu()">Salir al menú</button>
- </div>
-</div></div>
-
+<!-- OVERLAY -->
+<div id="overlay">
+  <div class="panel">
+    <div id="overlayText">PAUSA</div>
+    <div style="margin-top:10px">
+      <button onclick="resumeFromOverlay()">Reanudar (ESC)</button>
+      <button onclick="restartCurrent()">Reiniciar</button>
+      <button onclick="exitToMenu()">Salir al menú</button>
+    </div>
+  </div>
+</div>
 
 <script>
-/* ========= AUDIO (simple WebAudio beeps + fx) ========= */
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-let audioCtx = null;
-function ensureAudioCtx(){
- if(!audioCtx) audioCtx = new AudioCtx();
-}
-function fx(freq=440, t=0.08, type='sine', vol=0.06){
- try{
-   ensureAudioCtx();
-   const o = audioCtx.createOscillator();
-   const g = audioCtx.createGain();
-   o.type = type;
-   o.frequency.value = freq;
-   g.gain.value = vol;
-   o.connect(g); g.connect(audioCtx.destination);
-   o.start();
-   setTimeout(()=>{ o.stop(); g.disconnect(); }, t*1000);
- }catch(e){}
-}
+  function fx(){} 
 
-
-/* ========= GLOBALS ========= */
+/* ====== GLOBALS ====== */
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-let keys = {}, gameLoopId = null, paused=false;
-let currentGameKey = null, currentGameRestart = null;
-let tournamentActive=false, tournamentState=null;
-const PER_GAME_TIME = 60000; // 1 minuto = 60000 ms
+let keys = {};
+let paused = false;
+let currentGameRestart = null;
+let gameLoopId = null;
+const PER_GAME_TIME = 60*1000; // 1 min
+let tournamentActive = false;
+let tournamentState = {};
 
-
-document.addEventListener('keydown', e=> keys[e.key]=true);
-document.addEventListener('keyup', e=> keys[e.key]=false);
-
-
-/* Overlay */
-const overlay = document.getElementById('overlay');
-function showOverlay(text='PAUSA'){ paused=true; overlay.style.display='flex'; document.getElementById('overlayText').innerText=text; }
-function hideOverlay(){ paused=false; overlay.style.display='none'; }
-function resumeFromOverlay(){ hideOverlay(); }
-function restartCurrent(){ if(currentGameRestart) currentGameRestart(); hideOverlay(); }
-function exitToMenu(){ cancelAnimationFrame(gameLoopId); hideOverlay(); backToMenu(); }
-window.addEventListener('keydown', e=>{
- if(e.key==='Escape'){ if(overlay.style.display==='flex') hideOverlay(); else showOverlay('PAUSA'); }
-});
-
-
-/* Helpers */
-function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
+/* ====== UTILS ====== */
+function clamp(v,min,max){ return Math.max(min, Math.min(max,v)); }
 function rectsOverlap(a,b){ return a.x < b.x+b.w && a.x+a.w > b.x && a.y < b.y+b.h && a.y+a.h > b.y; }
-function backToMenu(){ cancelAnimationFrame(gameLoopId); canvas.style.display='none'; document.getElementById('menu').style.display='block'; document.getElementById('info').textContent=''; tournamentActive=false; }
 
+/* ====== INPUT ====== */
+window.addEventListener('keydown', e => { keys[e.key] = true; if(e.key==='Escape') togglePause(); });
+window.addEventListener('keyup', e => { keys[e.key] = false; });
 
-/* Start game dispatch */
-function startGame(name){ tournamentActive=false; clearAnimation(); document.getElementById('menu').style.display='none'; canvas.style.display='block'; document.getElementById('info').textContent=''; runGame(name); }
-
-
-function clearAnimation(){ if(gameLoopId) cancelAnimationFrame(gameLoopId); gameLoopId = null; }
-
-
-/* Remove safely: used by some games to remove added handlers */
-function safeRemoveEventListener(target,type,handler){ try{ target.removeEventListener(type,handler); }catch(e){} }
-
-
-/* runGame */
-function runGame(key, onEnd=null, isTournament=false){
- currentGameKey=key; currentGameRestart=null;
- document.getElementById('info').textContent = `Juego: ${key.toUpperCase()} | ESC pausar`;
- if(key==='futbol') futbolGame(onEnd,isTournament);
- if(key==='pong') pongGame(onEnd,isTournament);
- if(key==='tug') tugGame(onEnd,isTournament);
- if(key==='shooter') shooterGame(onEnd,isTournament);
- if(key==='f1') f1Game(onEnd,isTournament);
- if(key==='nascar') nascarGame(onEnd,isTournament);
+function togglePause(){
+  paused = !paused;
+  document.getElementById('overlay').style.display = paused ? 'flex' : 'none';
+}
+function resumeFromOverlay(){ paused = false; document.getElementById('overlay').style.display='none'; }
+function restartCurrent(){ if(currentGameRestart) currentGameRestart(); }
+function exitToMenu(){ 
+  paused=false;
+  document.getElementById('menu').style.display='block';
+  canvas.style.display='none';
+  clearAnimation();
 }
 
+/* ====== GAME CONTROL ====== */
+function clearAnimation(){ if(gameLoopId) cancelAnimationFrame(gameLoopId); gameLoopId=null; }
 
-/* Tournament */
+function runGame(gameName, onEnd, tournament=false){
+  document.getElementById('menu').style.display='none';
+  canvas.style.display='block';
+  switch(gameName){
+    case 'futbolGame': futbolGame(onEnd,tournament); break;
+    case 'pongGame': pongGame(onEnd,tournament); break;
+    case 'tugGame': tugGame(onEnd,tournament); break;
+    case 'shooterGame': shooterGame(onEnd,tournament); break;
+    case 'f1Game': f1Game(onEnd,tournament); break;
+    case 'nascarGame': nascarGame(onEnd,tournament); break;
+  }
+}
+
+function startGame(gameName){
+  runGame(gameName, winner => {
+    alert(winner ? `Ganador: ${winner}` : 'Empate');
+    exitToMenu();
+  });
+}
+
+/* ====== TOURNAMENT ====== */
 function startTournament(){
  tournamentActive=true;
  clearAnimation();
  document.getElementById('menu').style.display='none';
  canvas.style.display='block';
- const games = ['futbol','pong','tug','shooter','f1','nascar'];
+ const games = ['futbolGame','pongGame','tugGame','shooterGame','f1Game','nascarGame'];
  tournamentState = {games, idx:0, points:{p1:0,p2:0}, perGameTime:PER_GAME_TIME};
  runNextTournamentGame();
 }
-
 
 function runNextTournamentGame(){
  if(!tournamentActive) return;
@@ -147,7 +231,6 @@ function runNextTournamentGame(){
  ctx.fillText(`Torneo: ${g.toUpperCase()}`,220,260);
  setTimeout(()=>{
    runGame(g, (winner)=>{
-     // assign points: win = 3, tie(null) = 1 each
      if(winner==='p1') tournamentState.points.p1 += 3;
      else if(winner==='p2') tournamentState.points.p2 += 3;
      else { tournamentState.points.p1 += 1; tournamentState.points.p2 += 1; }
@@ -156,7 +239,6 @@ function runNextTournamentGame(){
    }, true);
  }, 800);
 }
-
 
 function finishTournament(){
  tournamentActive=false;
@@ -170,6 +252,7 @@ function finishTournament(){
  ctx.fillText(`Ganador: ${winnerText}`,260,300);
  document.getElementById('info').textContent='Presiona ESC y luego Salir al menú';
 }
+
 
 
 /* ============== GAMES ============== */
