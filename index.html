@@ -591,12 +591,14 @@ function shooterGame(onEnd,tournament){
 function f1Game(onEnd,tournament){
  clearAnimation();
  let p1={x:340,y:480,w:18,h:32,color:'#66ccff',lives:3};
- let p2={x=520,y:480,w:18,h:32,color:'#ff66a6',lives:3};
+ let p2={x:520,y:480,w:18,h:32,color:'#ff66a6',lives:3};
  let obstacles=[]; let scroll=0; let distance=0; const finish=3500;
  function gen(){ obstacles=[]; for(let i=0;i<120;i++){ const x=260+Math.random()*380; const y=-i*120 - Math.random()*200; obstacles.push({x,y,w:34,h:16}); } }
  gen();
- let finished=false;
- function endGame(winner){ if(finished) return; finished=true; if(onEnd) onEnd(winner); cancelAnimationFrame(gameLoopId); }
+ let gameTimer = null, finished=false;
+ function endGame(winner){ if(finished) return; finished=true; clearTimeout(gameTimer); if(onEnd) onEnd(winner); cancelAnimationFrame(gameLoopId); }
+ if(tournament) gameTimer = setTimeout(()=>{ endGame(p1.lives>p2.lives?'p1':(p2.lives>p1.lives?'p2':null)); }, PER_GAME_TIME);
+
 
  function draw(){
    ctx.fillStyle='#081'; ctx.fillRect(0,0,900,560);
@@ -634,10 +636,13 @@ function f1Game(onEnd,tournament){
    if(keys['Enter'] && onEnd){ endGame(p1.lives>p2.lives?'p1':(p2.lives>p1.lives?'p2':null)); return; }
  }
 
+
  currentGameRestart = ()=>{ p1.x=340;p1.lives=3; p2.x=520;p2.lives=3; distance=0; scroll=0; gen(); };
  function frame(){ if(!paused) update(); draw(); gameLoopId=requestAnimationFrame(frame); }
  frame();
 }
+
+
 
 
 
