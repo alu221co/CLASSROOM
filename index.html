@@ -595,7 +595,7 @@ function f1Game(onEnd,tournament){
  let obstacles=[]; let scroll=0; let distance=0; const finish=3500;
  function gen(){ obstacles=[]; for(let i=0;i<120;i++){ const x=260+Math.random()*380; const y=-i*120 - Math.random()*200; obstacles.push({x,y,w:34,h:16}); } }
  gen();
- let gameTimer = null, finished=false;
+ 
  function endGame(winner){ if(finished) return; finished=true; clearTimeout(gameTimer); if(onEnd) onEnd(winner); cancelAnimationFrame(gameLoopId); }
  if(tournament) gameTimer = setTimeout(()=>{ endGame(p1.lives>p2.lives?'p1':(p2.lives>p1.lives?'p2':null)); }, PER_GAME_TIME);
 
